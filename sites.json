@@ -1,0 +1,75 @@
+{
+  "_comment": "One entry per site. 'pages' are paths that must serve (status defaults to 200). 'redirects' must answer with that status and Location. 'netlify' is the site ID, used to confirm the published deploy is healthy. 'repo' + 'branch' let the check confirm what's live matches what's merged (needs GH_READ_TOKEN for private repos).",
+  "sites": [
+    {
+      "name": "LaunchEngine",
+      "url": "https://launchengine.com",
+      "pages": ["/", "/login", "/guides", "/contact", "/tools", "/marketplace", "/aircall-services", { "path": "/app", "status": 307 }],
+      "redirects": [{ "from": "https://www.launchengine.com/", "to": "https://launchengine.com/", "status": 301 }],
+      "netlify": "2c270111-aea9-4c6a-af89-652c5480606d",
+      "repo": "Launch-Engine/site-launchengine",
+      "branch": "main"
+    },
+    {
+      "name": "LaunchEngine Workspace (app)",
+      "url": "https://app.launchengine.com",
+      "pages": ["/"],
+      "netlify": "8abd5d11-80c3-4d8b-b4f1-c1fe6e43184b"
+    },
+    {
+      "name": "Danberry Properties",
+      "url": "https://danberryproperties.com",
+      "pages": ["/"],
+      "netlify": "a78618f6-7bd2-4045-a032-fccd13ef9101",
+      "repo": "Launch-Engine/site-danberry",
+      "branch": "main"
+    },
+    {
+      "name": "Florida's Property Management",
+      "url": "https://www.floridaspropertymanagement.com",
+      "pages": ["/"],
+      "repo": "Launch-Engine/site-floridaspm",
+      "branch": "main"
+    },
+    {
+      "name": "Villas at Sheriden",
+      "url": "https://villasatsheriden.com",
+      "pages": ["/"],
+      "repo": "Launch-Engine/site-villasatsheriden",
+      "branch": "main"
+    },
+    {
+      "name": "407 Properties",
+      "url": "https://407properties.com",
+      "pages": ["/"],
+      "repo": "Launch-Engine/site-407properties",
+      "branch": "main"
+    },
+    {
+      "name": "Supra Property Management",
+      "url": "https://suprapm.com",
+      "pages": ["/"],
+      "netlify": "1f88e7f3-45d2-4850-a084-8b413692621e"
+    },
+    {
+      "name": "Elite Realty Group",
+      "url": "https://www.eliterealtygroup.com",
+      "pages": ["/"],
+      "netlify": "9bae3df5-53b3-42fd-aafc-5e45080b421f"
+    },
+    {
+      "name": "DocRunner",
+      "url": "https://docrunner.io",
+      "pages": ["/"],
+      "repo": "Launch-Engine/site-docrunner",
+      "branch": "main"
+    },
+    {
+      "name": "DocRunner Developer Docs",
+      "url": "https://developer.docrunner.io",
+      "pages": ["/"],
+      "repo": "Launch-Engine/site-docrunner-developer",
+      "branch": "main"
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+# Reusable pull request check for every site repo. Builds the site, serves
+# it, and opens every page in a real browser at phone and desktop widths.
+# A page fails if it doesn't load, or if it is wider than the phone screen.
+#
+# A site repo calls it with a five-line workflow:
+#
+#   name: Site check
+#   on: [pull_request]
+#   jobs:
+#     check:
+#       uses: Launch-Engine/site-monitor/.github/workflows/site-check.yml@main
+#       with: { build: "npm ci && npm run build", serve: "npm start -- -p 4173" }
+#
+# Static sites need no inputs at all. Fix or improve this file once and every
+# site picks it up on its next pull request.
+name: Site check
+
+on:
+  workflow_call:
+    inputs:
+      build:
+        description: Command that builds the site. Leave empty for a plain static site.
+        type: string
+        default: ''
+      serve:
+        description: Command that serves the built site on port 4173.
+        type: string
+        default: 'npx -y serve -l 4173 .'
+      pages:
+        description: Comma-separated paths to check. Empty means every URL in sitemap.xml, or / if there is none.
+        type: string
+        default: ''
+      max-pages:
+        description: Cap on pages taken from the sitemap.
+        type: number
+        default: 40
+      node-version:
+        type: string
+        default: '22'
+
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Build
+        if: inputs.build != ''
+        run: ${{ inputs.build }}
+
+      - name: Serve
+        run: |
+          (${{ inputs.serve }} > serve.log 2>&1 &)
+          for i in $(seq 1 60); do curl -sf -o /dev/null http://localhost:4173/ && exit 0; sleep 1; done
+          echo "Site never answered on port 4173"; cat serve.log; exit 1
+
+      - name: Browser test harness
+        run: |
+          mkdir -p /tmp/site-check && cd /tmp/site-check
+          npm init -y > /dev/null && npm i --no-audit --no-fund @playwright/test@1 > /dev/null
+          cat > playwright.config.js <<'EOF'
+          const { defineConfig } = require('@playwright/test')
+          module.exports = defineConfig({
+            testDir: '.',
+            timeout: 60_000,
+            retries: 1,
+            reporter: [['list'], ['html', { open: 'never' }]],
+            use: { trace: 'retain-on-failure', screenshot: 'only-on-failure' }
+          })
+          EOF
+          cat > pages.spec.js <<'EOF'
+          const { test, expect } = require('@playwright/test')
+          const BASE = 'http://localhost:4173'
+          const WIDTHS = { phone: 375, desktop: 1440 }
+          const MAX = Number(process.env.MAX_PAGES || 40)
+
+          async function pages() {
+            const given = (process.env.PAGES || '').split(',').map(s => s.trim()).filter(Boolean)
+            if (given.length) return given
+            try {
+              const xml = await (await fetch(`${BASE}/sitemap.xml`)).text()
+              const paths = [...xml.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/g)]
+                .map(m => { try { return new URL(m[1]).pathname } catch { return null } })
+                .filter(p => p && !/\.(xml|pdf)$/.test(p))
+              if (paths.length) return [...new Set(['/', ...paths])].slice(0, MAX)
+            } catch {}
+            return ['/']
+          }
+
+          test('site pages load and fit a phone screen', async ({ browser }) => {
+            const list = await pages()
+            const problems = []
+            const warnings = []
+            for (const [name, width] of Object.entries(WIDTHS)) {
+              const page = await browser.newPage({ viewport: { width, height: 900 } })
+              for (const path of list) {
+                const errors = []
+                const onError = e => errors.push(e.message.split('\n')[0])
+                page.on('pageerror', onError)
+                const res = await page.goto(BASE + path, { waitUntil: 'load' }).catch(e => ({ status: () => 0, err: e.message }))
+                const status = res.status()
+                if (status !== 200) problems.push(`${path} answered ${status || res.err} (${name})`)
+                else if (name === 'phone') {
+                  const wide = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)
+                  if (wide > 1) problems.push(`${path} is ${wide}px wider than a phone screen; something overflows`)
+                }
+                if (errors.length) warnings.push(`${path} (${name}): ${errors[0]}`)
+                page.off('pageerror', onError)
+              }
+              await page.close()
+            }
+            console.log(`Checked ${list.length} page(s) at ${Object.keys(WIDTHS).join(' and ')} width.`)
+            if (warnings.length) console.log(`Script errors (not failing the check):\n  ${[...new Set(warnings)].join('\n  ')}`)
+            expect(problems, problems.join('\n')).toEqual([])
+          })
+          EOF
+          npx playwright install --with-deps chromium > /dev/null
+
+      - name: Open every page at phone and desktop width
+        working-directory: /tmp/site-check
+        env:
+          PAGES: ${{ inputs.pages }}
+          MAX_PAGES: ${{ inputs.max-pages }}
+        run: npx playwright test
+
+      - name: Report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-check-report
+          path: /tmp/site-check/playwright-report
+          retention-days: 7

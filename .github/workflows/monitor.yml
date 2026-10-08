@@ -1,0 +1,48 @@
+# Every hour: is every site in sites.json up, serving its key pages, with a
+# valid certificate, and is the published Netlify deploy healthy and current?
+#
+# Read-only. Changes nothing anywhere. Failures post to Slack (org secret
+# SLACK_ALERT_WEBHOOK_URL); without it, GitHub emails the failure instead.
+#
+# One run covers every site, so adding a site to sites.json costs nothing.
+name: Monitor
+
+on:
+  schedule:
+    - cron: '7 * * * *'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: monitor
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check every site
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          GH_READ_TOKEN: ${{ secrets.GH_READ_TOKEN }}
+        run: node check.mjs
+
+      - name: Tell Slack
+        if: failure()
+        env:
+          SLACK_ALERT_WEBHOOK_URL: ${{ secrets.SLACK_ALERT_WEBHOOK_URL }}
+        run: |
+          [ -n "$SLACK_ALERT_WEBHOOK_URL" ] || { echo "No Slack webhook set; GitHub's failure email is the alert."; exit 0; }
+          fails=$(head -12 failures.txt 2>/dev/null)
+          text=":rotating_light: *Site monitor: something is down*"
+          [ -n "$fails" ] && text="$text\n\`\`\`$fails\`\`\`"
+          text="$text\n<$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|Details>"
+          curl -s -X POST -H 'Content-Type: application/json' -d "{\"text\": \"$text\"}" "$SLACK_ALERT_WEBHOOK_URL"
