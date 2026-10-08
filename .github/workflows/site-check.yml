@@ -42,6 +42,10 @@ jobs:
   pages:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      # Next.js builds run out of the default 2GB heap once a site has a few
+      # dozen pages (launchengine.com did, 2026-10-08). Same as its netlify.toml.
+      NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - uses: actions/checkout@v4
 
