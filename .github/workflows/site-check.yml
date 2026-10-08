@@ -33,7 +33,7 @@ on:
       max-pages:
         description: Cap on pages taken from the sitemap.
         type: number
-        default: 40
+        default: 100
       node-version:
         type: string
         default: '22'
