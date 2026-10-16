@@ -1,4 +1,4 @@
-# Every hour: is every site in sites.json up, serving its key pages, with a
+# Hourly (GitHub often delays it to every few hours): is every site in sites.json up, serving its key pages, with a
 # valid certificate, and is the published Netlify deploy healthy and current?
 #
 # Read-only. Changes nothing anywhere. Failures post to Slack (org secret

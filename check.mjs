@@ -6,7 +6,9 @@
 //
 // Optional environment:
 //   NETLIFY_AUTH_TOKEN  confirms the published deploy is healthy (state,
-//                       and that it matches the repo's branch when 'repo' is set)
+//                       and that it matches the repo's branch when 'repo' is set).
+//                       Required in CI: a missing or rejected token fails the run,
+//                       so the deploy checks can't quietly stop running.
 //   GH_READ_TOKEN       reads the branch head of private repos
 //
 // Exit code 1 if any check fails. Writes failures.txt for the Slack step.
@@ -65,14 +67,14 @@ function certDaysLeft(host) {
 // Netlify: all sites across the teams the token can see, keyed by host.
 async function netlifySites() {
   const token = process.env.NETLIFY_AUTH_TOKEN
-  if (!token) return null
+  if (!token) return { skipped: 'NETLIFY_AUTH_TOKEN is not set' }
   const byHost = new Map()
   const byId = new Map()
   for (let page = 1; page <= 5; page++) {
     const res = await fetch(`https://api.netlify.com/api/v1/sites?filter=all&per_page=100&page=${page}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
-    if (!res.ok) { console.log(`  warn  Netlify API ${res.status}; skipping deploy checks`); return null }
+    if (!res.ok) return { skipped: `Netlify API answered ${res.status}` }
     const list = await res.json()
     for (const s of list) {
       byId.set(s.id, s)
@@ -91,7 +93,12 @@ async function branchHead(repo, branch) {
   return (await res.json()).commit?.sha || null
 }
 
-const netlify = await netlifySites()
+let netlify = await netlifySites()
+if (netlify.skipped) {
+  console.log(`\nDeploy checks skipped: ${netlify.skipped}`)
+  if (process.env.CI) say(false, { name: 'Monitor' }, 'Netlify deploy checks ran', netlify.skipped)
+  netlify = null
+}
 
 for (const site of sites) {
   console.log(`\n${site.name}  ${site.url}`)

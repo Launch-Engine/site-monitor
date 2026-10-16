@@ -6,7 +6,8 @@ into the site itself except a five-line workflow.
 
 ## What runs
 
-**Monitor** (`.github/workflows/monitor.yml`), every hour and on every push
+**Monitor** (`.github/workflows/monitor.yml`), scheduled hourly (GitHub
+delays busy schedules, so expect every few hours) and on every push
 to main. For each site in `sites.json`:
 
 - key pages answer with the expected status, and are not a Netlify edge
@@ -56,11 +57,16 @@ printed but do not fail the check, because third-party embeds throw.
    Launch-Engine org; sites in other orgs (Supra, Elite Realty, Dream Team)
    get the hourly monitor but not the PR check.
 
-## Secrets (org level, set once)
+## Secrets (set on this repo)
+
+This repo is public, and org secrets marked "private repositories" are not
+passed to public repos. Set secrets on this repo (`gh secret set NAME -R
+Launch-Engine/site-monitor`), or give the org secret "all repositories" or
+selected-repo access that includes this one.
 
 | Secret | Purpose | Required |
 |---|---|---|
-| `NETLIFY_AUTH_TOKEN` | reads published deploy state across both Netlify teams | for deploy checks |
+| `NETLIFY_AUTH_TOKEN` | reads published deploy state across both Netlify teams | yes in CI: the run fails without it, so deploy checks can't quietly stop |
 | `SLACK_ALERT_WEBHOOK_URL` | where failures are posted | no, email fallback |
 | `GH_READ_TOKEN` | fine-grained token with read access to the site repos, for the drift check | no, drift check skipped |
 
