@@ -13,6 +13,21 @@
 #
 # Static sites need no inputs at all. Fix or improve this file once and every
 # site picks it up on its next pull request.
+#
+# Content rules (optional): a site-rules.json at the root of the site repo
+# lists, per page, text that must never come back (a client asked for it to
+# be removed) and text that must stay (wording a client asked for). Each rule
+# is checked against the page's words after its scripts run (text in closed
+# accordions counts; scripts, styles and JSON-LD don't), so a change that
+# brings removed text back fails the pull request:
+#
+#   { "rules": [
+#     { "page": "/rentals", "why": "Jeff, Oct 21 (item 7074)",
+#       "absent": ["Contact Our Leasing Team"],
+#       "present": ["Portable Tenant Screening Reports (PTSR)"] } ] }
+#
+# Matching ignores case and runs of spaces. "everywhere": true on a rule
+# checks it on every page the check opens instead of one page.
 name: Site check
 
 on:
@@ -122,8 +137,50 @@ jobs:
             if (warnings.length) console.log(`Script errors (not failing the check):\n  ${[...new Set(warnings)].join('\n  ')}`)
             expect(problems, problems.join('\n')).toEqual([])
           })
+
+          // site-rules.json: what clients asked to remove stays removed, and
+          // the wording they asked for stays put. See the top of this file.
+          const fs = require('fs')
+          const RULES = fs.existsSync('./site-rules.json') ? JSON.parse(fs.readFileSync('./site-rules.json', 'utf8')).rules || [] : []
+          test('content rules hold (site-rules.json)', async ({ browser }) => {
+            test.skip(!RULES.length, 'no site-rules.json in this repo')
+            test.setTimeout(10 * 60_000) // one page load per page a rule names
+            const norm = (t) => String(t).toLowerCase().replace(/\s+/g, ' ').trim()
+            const all = await pages()
+            const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
+            const text = {}
+            const read = async (path) => {
+              if (text[path] !== undefined) return text[path]
+              const res = await page.goto(BASE + path, { waitUntil: 'load' }).catch(() => null)
+              // Let scripts that fetch content finish; a widget that never goes quiet can't hold it up.
+              await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {})
+              // All of the page's words, closed accordions included; scripts, styles
+                // and structured data (JSON-LD) left out.
+                text[path] = res && res.status() === 200 ? norm(await page.evaluate(() => {
+                  const body = document.body.cloneNode(true)
+                  body.querySelectorAll('script, style, noscript, template, iframe').forEach((el) => el.remove())
+                  return body.textContent
+                })) : null
+              return text[path]
+            }
+            const problems = []
+            for (const rule of RULES) {
+              const paths = rule.everywhere ? all : [rule.page]
+              const why = rule.why ? ` (${rule.why})` : ''
+              for (const path of paths) {
+                const body = await read(path)
+                if (body === null) { problems.push(`${path} did not load, so its rules could not be checked${why}`); continue }
+                for (const t of rule.absent || []) if (body.includes(norm(t))) problems.push(`${path} shows "${t}", which was asked to be removed${why}`)
+                for (const t of rule.present || []) if (!body.includes(norm(t))) problems.push(`${path} is missing "${t}"${why}`)
+              }
+            }
+            await page.close()
+            console.log(`Checked ${RULES.length} content rule(s).`)
+            expect(problems, problems.join('\n')).toEqual([])
+          })
           EOF
           npx playwright install --with-deps chromium > /dev/null
+          if [ -f "$GITHUB_WORKSPACE/site-rules.json" ]; then cp "$GITHUB_WORKSPACE/site-rules.json" ./site-rules.json; fi
 
       - name: Open every page at phone and desktop width
         working-directory: /tmp/site-check
