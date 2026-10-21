@@ -17,8 +17,9 @@
 # Content rules (optional): a site-rules.json at the root of the site repo
 # lists, per page, text that must never come back (a client asked for it to
 # be removed) and text that must stay (wording a client asked for). Each rule
-# is checked against the page as a visitor sees it, after its scripts run, so
-# a change that brings removed text back fails the pull request:
+# is checked against the page's words after its scripts run (text in closed
+# accordions counts; scripts, styles and JSON-LD don't), so a change that
+# brings removed text back fails the pull request:
 #
 #   { "rules": [
 #     { "page": "/rentals", "why": "Jeff, Oct 21 (item 7074)",
@@ -143,14 +144,23 @@ jobs:
           const RULES = fs.existsSync('./site-rules.json') ? JSON.parse(fs.readFileSync('./site-rules.json', 'utf8')).rules || [] : []
           test('content rules hold (site-rules.json)', async ({ browser }) => {
             test.skip(!RULES.length, 'no site-rules.json in this repo')
+            test.setTimeout(10 * 60_000) // one page load per page a rule names
             const norm = (t) => String(t).toLowerCase().replace(/\s+/g, ' ').trim()
             const all = await pages()
             const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
             const text = {}
             const read = async (path) => {
               if (text[path] !== undefined) return text[path]
-              const res = await page.goto(BASE + path, { waitUntil: 'networkidle' }).catch(() => null)
-              text[path] = res && res.status() === 200 ? norm(await page.evaluate(() => document.body.innerText)) : null
+              const res = await page.goto(BASE + path, { waitUntil: 'load' }).catch(() => null)
+              // Let scripts that fetch content finish; a widget that never goes quiet can't hold it up.
+              await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {})
+              // All of the page's words, closed accordions included; scripts, styles
+                // and structured data (JSON-LD) left out.
+                text[path] = res && res.status() === 200 ? norm(await page.evaluate(() => {
+                  const body = document.body.cloneNode(true)
+                  body.querySelectorAll('script, style, noscript, template, iframe').forEach((el) => el.remove())
+                  return body.textContent
+                })) : null
               return text[path]
             }
             const problems = []
