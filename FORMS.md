@@ -5,7 +5,7 @@ where it must. Workflow `Forms` (`.github/workflows/forms.yml`):
 
 | When | What | Sends anything? |
 |---|---|---|
-| Every hour | **Setup:** every live form (found on the site's pages) has a route in the site's `lib/forms.json`; Netlify collects it; every recipient is emailed (our sender, or a Netlify notification until our sender is live); monday's lead board, columns and Source labels exist; the workspace intake is set up. | No |
+| Every hour | **Setup:** every live form (found on the site's pages) has a route in the site's `lib/forms.json`; Netlify collects it; every recipient is emailed (our sender, or a Netlify notification until our sender is live); monday's lead board, columns and Source labels exist; the workspace intake is set up; and no real form email failed in the last 2 hours. | No |
 | 9 AM Denver | **Test:** one submission per form from a signed address (`forms-check+<time>.<sig>@launchengine.com`). Proves it is saved in Netlify Forms, the email goes out (SendGrid sandbox: accepted, never delivered), and a lead would be saved by the workspace (dry run, nothing kept). The test is then deleted. Skipped for any form where a Netlify notification still emails someone outside LaunchEngine. | No email reaches a person |
 | 3 AM Denver | **Count:** every real submission of the last 26 hours shows as emailed in the site's delivery log, and every lead is in the workspace and in monday. | No |
 
