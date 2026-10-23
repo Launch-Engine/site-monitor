@@ -89,8 +89,11 @@ async function liveForms(site) {
 // What a person would fill in: every named field, required ones answered.
 function fieldsOf(html) {
   const fields = {}
-  for (const m of html.matchAll(/<(input|select|textarea)\b([^>]*)>([\s\S]*?<\/select>)?/g)) {
-    const [, tag, attrs, options] = m
+  for (const m of html.matchAll(/<(input|select|textarea)\b([^>]*)>/g)) {
+    const [, tag, attrs] = m
+    // Only a select reads ahead (to its options); an input must not swallow
+    // the fields up to the next </select>.
+    const options = tag === 'select' ? html.slice(m.index, html.indexOf('</select>', m.index)) : ''
     const name = (/\bname="([^"]+)"/.exec(attrs) || [])[1]
     if (!name || name === 'form-name' || name === 'bot-field' || name.startsWith('cf-turnstile')) continue
     const type = ((/\btype="([^"]+)"/.exec(attrs) || [])[1] || tag).toLowerCase()
