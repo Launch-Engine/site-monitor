@@ -143,6 +143,11 @@ async function checkSite(site) {
       if (route.leads.workspace) say(setup.workspace === 'set up', site, `${name}: workspace intake set up`, setup.workspace)
     }
   }
+  // Between nightly counts: any real email that failed or had no route lately.
+  const recent = await status(site, `?since=${encodeURIComponent(new Date(Date.now() - 2 * 3600e3).toISOString())}`).catch(() => ({ deliveries: [] }))
+  const bad = recent.deliveries.filter(d => !d.check && ['failed', 'no_route'].includes(d.status))
+  say(!bad.length, site, 'no failed form emails in the last 2 hours', bad.map(d => `${d.form} ${d.status}${d.error ? `: ${d.error}` : ''}`).join('; '))
+
   for (const name of Object.keys(setup.routes)) {
     if (!live[name]) say('warn', site, `${name} has a route but isn't on any page`, 'remove the route, or the page lost its form')
   }
