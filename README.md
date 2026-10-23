@@ -22,6 +22,8 @@ Read-only. Failures go to Slack, or to GitHub's failure email when the Slack
 secret is not set. One run covers every site, so the cost does not grow with
 the number of sites.
 
+**Forms** (`.github/workflows/forms.yml`, `forms.mjs`): every form on the sites in `forms.json` reaches its email, workspace and monday, with a daily test and a nightly count. See `FORMS.md`.
+
 **Site check** (`.github/workflows/site-check.yml`), called from each site
 repo on pull requests. Builds the site, serves it, and opens every page from
 `sitemap.xml` in Chromium at phone (375px) and desktop (1440px) width. Fails
