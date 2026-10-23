@@ -1,0 +1,59 @@
+# Forms (forms.mjs, FORMS.md): does every form on every site in forms.json
+# reach where it must?
+#   every hour       setup: routes, Netlify collecting, emails, monday, workspace. Sends nothing.
+#   every morning    plus one signed test through each form (sandbox email, dry-run lead, then deleted)
+#   every night      plus the count: every real submission of the last 26 hours was
+#                    emailed and every lead reached the workspace and monday
+# Failures post to Slack (#site-monitor).
+name: Forms
+
+on:
+  schedule:
+    - cron: '23 * * * *'
+    - cron: '0 15 * * *'   # 9 AM Denver: the daily test
+    - cron: '0 9 * * *'    # 3 AM Denver: the nightly count
+  push:
+    branches: [main]
+    paths: ['forms.mjs', 'forms.json', '.github/workflows/forms.yml']
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'setup, test or count'
+        default: setup
+
+concurrency:
+  group: forms
+  cancel-in-progress: false
+
+jobs:
+  forms:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check every form
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          FORM_CHECK_SECRET: ${{ secrets.FORM_CHECK_SECRET }}
+          SCHEDULE: ${{ github.event.schedule }}
+          MODE: ${{ github.event.inputs.mode }}
+        run: |
+          flag=""
+          [ "$SCHEDULE" = "0 15 * * *" ] || [ "$MODE" = "test" ] && flag="--test"
+          [ "$SCHEDULE" = "0 9 * * *" ] || [ "$MODE" = "count" ] && flag="--count"
+          node forms.mjs $flag
+      - name: Tell Slack
+        if: failure()
+        env:
+          SLACK_ALERT_WEBHOOK_URL: ${{ secrets.SLACK_ALERT_WEBHOOK_URL }}
+        run: |
+          [ -n "$SLACK_ALERT_WEBHOOK_URL" ] || { echo "No Slack webhook set; GitHub's failure email is the alert."; exit 0; }
+          fails=$(head -12 failures.txt 2>/dev/null)
+          nl=$'\n'
+          text=":rotating_light: *Forms: a form isn't reaching where it must*"
+          [ -n "$fails" ] && text="$text$nl\`\`\`$fails\`\`\`"
+          text="$text$nl<$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|Details>"
+          curl -s -X POST -H 'Content-Type: application/json' -d "$(jq -n --arg t "$text" '{text: $t}')" "$SLACK_ALERT_WEBHOOK_URL"
