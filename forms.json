@@ -1,11 +1,16 @@
 {
-  "_comment": "Sites whose forms forms.mjs checks. url is where the live forms are (Falcon is on its staging address until the DNS cutover). Each site needs its form-status function and the FORM_CHECK_SECRET env var (same value as this repo's secret). See FORMS.md.",
+  "_comment": "Sites whose forms forms.mjs checks. url is where the live forms are (Falcon went live on www.falconco.com on 2026-10-27). Each site needs its form-status function and the FORM_CHECK_SECRET env var (same value as this repo's secret). See FORMS.md.",
   "sites": [
     {
       "name": "site-falconco",
-      "url": "https://site-falconco.netlify.app",
+      "url": "https://www.falconco.com",
       "netlify": "95e0f712-14fc-47bf-8fa8-50431d2f7ce1",
-      "pages": ["/quote", "/vendors", "/contact", "/owners"]
+      "pages": [
+        "/quote",
+        "/vendors",
+        "/contact",
+        "/owners"
+      ]
     }
   ]
 }
