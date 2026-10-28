@@ -27,3 +27,7 @@ By hand: `/forms-check` in Claude Code, or
 ## Sweep: nothing is lost when Netlify's event doesn't fire
 
 `form-sweep.yml` runs `node forms.mjs --sweep` every 10 minutes. Any real submission of the last 48 hours, over 3 minutes old, with no line in the site's delivery log goes to the site's `form-redeliver`, which delivers it exactly once (the site claims each submission before emailing or saving it). Each rescue posts to Slack. `--sweep --dry` (or a push to a branch) only lists them. Started Oct 28, 2026 after two vendor questions to Falcon never reached maintenance@.
+
+## Spam folder
+
+A submission Netlify marks as spam never runs the site's email function. The sweep looks at each site's spam folder (last 48 hours) and alerts once on anything that isn't our own test and isn't obvious junk (mostly non-Latin text, or three or more links): check it isn't a real person, and if it is, mark it "not spam" in Netlify and forward it. The site remembers which it alerted on (form-status `spam_seen`). Our own form test flagged as spam is a warning, not an alert.

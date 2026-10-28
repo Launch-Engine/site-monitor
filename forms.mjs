@@ -17,6 +17,8 @@
 //                                   2026, two vendor questions) is handed to the
 //                                   site's form-redeliver, which delivers it exactly
 //                                   once. Each rescue is a failure line, so Slack hears.
+//                                   It also alerts once on anything in Netlify's spam
+//                                   folder that isn't ours or obvious junk.
 //   node forms.mjs --sweep --dry    lists what the sweep would deliver; sends nothing.
 //
 // Environment: NETLIFY_AUTH_TOKEN, FORM_CHECK_SECRET (required); FORMS_URL (optional, a preview).
@@ -197,7 +199,11 @@ async function testSite(site, setup, live, netlifyForms) {
     }
     if (!submission) {
       const spam = (await netlify(`/forms/${collected.id}/submissions?state=spam&per_page=20`)).find(s => s.email === email || s.data?.email === email)
-      say(false, site, `${name}: test saved in Netlify Forms`, spam ? 'Netlify marked it as spam' : 'not there after a minute')
+      // Netlify's filter flagging our own test says nothing about the form; a
+      // warning, not an alert (Oct 28, 2026: 3 of 4 tests flagged in a day).
+      // The sweep watches the spam folder for real people.
+      if (spam) say('warn', site, `${name}: test flagged as spam by Netlify`, 'not tested this run; deleted')
+      else say(false, site, `${name}: test saved in Netlify Forms`, 'not there after a minute')
       if (spam) await netlify(`/submissions/${spam.id}`, { method: 'DELETE' }).catch(() => {})
       continue
     }
@@ -291,6 +297,36 @@ async function sweepSite(site) {
     }
   }
   if (!missing) say(true, site, 'every real submission of the last 48 hours has a delivery line')
+  await watchSpam(site, since)
+}
+
+// Obvious junk: mostly non-Latin letters (the Russian SEO spam of Oct 2026),
+// or three or more links. Everything else in the spam folder may be a person.
+function obviousJunk(s) {
+  const text = Object.entries(s.data || {}).filter(([k]) => !['ip', 'user_agent', 'referrer'].includes(k)).map(([, v]) => String(v)).join(' ')
+  const letters = text.match(/\p{L}/gu) || []
+  const latin = letters.filter(c => /\p{Script=Latin}/u.test(c)).length
+  return (letters.length > 20 && latin / letters.length < 0.5) || (text.match(/https?:\/\//g) || []).length >= 3
+}
+
+// Netlify's spam folder never reaches our email function. Each submission in
+// it that isn't ours and isn't obvious junk is alerted once (the site
+// remembers which: form-status spam_seen), so a real person isn't missed.
+async function watchSpam(site, since) {
+  const maybe = []
+  for (const form of await netlify(`/sites/${site.netlify}/forms`)) {
+    for (const s of await netlify(`/forms/${form.id}/submissions?state=spam&per_page=100`)) {
+      const email = s.email || s.data?.email || ''
+      if (s.created_at < since || isCheck(email) || /@launchengine\.com$/i.test(email) || obviousJunk(s)) continue
+      maybe.push({ s, form })
+    }
+  }
+  if (!maybe.length) return say(true, site, "nothing that looks like a person in Netlify's spam folder")
+  const fresh = new Set(DRY ? maybe.map(m => m.s.id) : (await status(site, '', { method: 'POST', body: JSON.stringify({ spam_seen: maybe.map(m => m.s.id) }) })).new || [])
+  for (const { s, form } of maybe.filter(m => fresh.has(m.s.id))) {
+    const when = new Date(s.created_at).toLocaleString('en-US', { timeZone: 'America/Denver', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+    say(DRY ? 'warn' : false, site, `${form.name} at ${when} (${mask(s.email || s.data?.email)}): in Netlify's spam folder`, 'check it is not a real person; if it is, mark it "not spam" in Netlify and forward it')
+  }
 }
 
 for (const site of sites) {
