@@ -23,3 +23,7 @@ site's env), `SLACK_ALERT_WEBHOOK_URL`.
 
 By hand: `/forms-check` in Claude Code, or
 `node forms.mjs [site] [--test|--count]` (`FORMS_URL=` for a deploy preview).
+
+## Sweep: nothing is lost when Netlify's event doesn't fire
+
+`form-sweep.yml` runs `node forms.mjs --sweep` every 10 minutes. Any real submission of the last 48 hours, over 3 minutes old, with no line in the site's delivery log goes to the site's `form-redeliver`, which delivers it exactly once (the site claims each submission before emailing or saving it). Each rescue posts to Slack. `--sweep --dry` (or a push to a branch) only lists them. Started Oct 28, 2026 after two vendor questions to Falcon never reached maintenance@.
