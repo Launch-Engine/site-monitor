@@ -1,0 +1,54 @@
+# Form sweep (forms.mjs --sweep, FORMS.md): every 10 minutes, any real
+# submission Netlify saved but never ran submission-created for (no delivery
+# line after 3 minutes) is handed to the site's form-redeliver, which
+# delivers it exactly once. Each rescue, and anything it can't deliver,
+# posts to Slack (#site-monitor).
+name: Form sweep
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  # A branch that changes the sweep runs it as a dry run: a list, nothing sent.
+  push:
+    branches-ignore: [main]
+    paths: ['forms.mjs', '.github/workflows/form-sweep.yml']
+  workflow_dispatch:
+    inputs:
+      dry:
+        description: 'yes: only list what it would deliver'
+        default: 'no'
+
+concurrency:
+  group: form-sweep
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Deliver what Netlify never did
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          FORM_CHECK_SECRET: ${{ secrets.FORM_CHECK_SECRET }}
+          DRY: ${{ github.event_name == 'push' && 'yes' || github.event.inputs.dry }}
+        run: |
+          flag=""
+          [ "$DRY" = "yes" ] && flag="--dry"
+          node forms.mjs --sweep $flag
+      - name: Tell Slack
+        if: failure()
+        env:
+          SLACK_ALERT_WEBHOOK_URL: ${{ secrets.SLACK_ALERT_WEBHOOK_URL }}
+        run: |
+          [ -n "$SLACK_ALERT_WEBHOOK_URL" ] || { echo "No Slack webhook set; GitHub's failure email is the alert."; exit 0; }
+          fails=$(head -12 failures.txt 2>/dev/null)
+          nl=$'\n'
+          text=":rotating_light: *Forms sweep: a submission Netlify never delivered*"
+          [ -n "$fails" ] && text="$text$nl\`\`\`$fails\`\`\`"
+          text="$text$nl<$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|Details>"
+          curl -s -X POST -H 'Content-Type: application/json' -d "$(jq -n --arg t "$text" '{text: $t}')" "$SLACK_ALERT_WEBHOOK_URL"

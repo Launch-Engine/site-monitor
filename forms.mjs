@@ -10,6 +10,14 @@
 //   node forms.mjs --count [site]   also checks every real submission of the last
 //                                   26 hours was emailed and every lead reached the
 //                                   workspace and monday.
+//   node forms.mjs --sweep [site]   only this (every 10 minutes, form-sweep.yml):
+//                                   a real submission of the last 48 hours, over 3
+//                                   minutes old, with no delivery line (Netlify's
+//                                   submission-created event never fired; Oct 27-28,
+//                                   2026, two vendor questions) is handed to the
+//                                   site's form-redeliver, which delivers it exactly
+//                                   once. Each rescue is a failure line, so Slack hears.
+//   node forms.mjs --sweep --dry    lists what the sweep would deliver; sends nothing.
 //
 // Environment: NETLIFY_AUTH_TOKEN, FORM_CHECK_SECRET (required); FORMS_URL (optional, a preview).
 // Exit code 1 when anything fails; failures.txt feeds the Slack step.
@@ -21,6 +29,8 @@ import crypto from 'node:crypto'
 const args = process.argv.slice(2)
 const TEST = args.includes('--test')
 const COUNT = args.includes('--count')
+const SWEEP = args.includes('--sweep')
+const DRY = args.includes('--dry')
 const filter = (args.find(a => !a.startsWith('--')) || '').toLowerCase()
 const config = JSON.parse(readFileSync(new URL('./forms.json', import.meta.url), 'utf8'))
 const sites = config.sites.filter(s => !filter || s.name.toLowerCase().includes(filter))
@@ -250,7 +260,41 @@ if (!TOKEN || !SECRET) {
   writeFileSync('failures.txt', 'Form checks could not run: NETLIFY_AUTH_TOKEN or FORM_CHECK_SECRET is missing\n')
   process.exit(1)
 }
+// A submission Netlify never ran submission-created for: deliver it now,
+// through the site's form-redeliver (it claims each submission, so one the
+// event or another sweep already delivered is answered "already delivered").
+async function sweepSite(site) {
+  console.log(`\n${site.name}  ${site.url}  (sweep${DRY ? ', dry run' : ''})`)
+  const setup = await status(site, '?setup=1')
+  if (!setup.sender) return say('warn', site, 'sweep skipped', 'our sender is not set up on this site')
+  const since = new Date(Date.now() - 48 * 3600e3).toISOString()
+  const settled = Date.now() - 3 * 60e3 // the event normally runs within seconds
+  const logged = new Set((await status(site, `?since=${encodeURIComponent(since)}`)).deliveries.map(d => d.id))
+  let missing = 0
+  for (const form of await netlify(`/sites/${site.netlify}/forms`)) {
+    const subs = (await netlify(`/forms/${form.id}/submissions?per_page=100`))
+      .filter(s => s.created_at >= since && Date.parse(s.created_at) < settled && !logged.has(s.id) && !isCheck(s.email || s.data?.email))
+    for (const s of subs) {
+      missing++
+      const when = new Date(s.created_at).toLocaleString('en-US', { timeZone: 'America/Denver', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+      const who = `${form.name} at ${when} (${mask(s.email || s.data?.email)})`
+      if (DRY) { say('warn', site, `${who}: would deliver now`); continue }
+      const res = await fetch(`${site.url}/.netlify/functions/form-redeliver`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Form-Check-Secret': SECRET },
+        body: JSON.stringify({ payload: { id: s.id, form_name: form.name, created_at: s.created_at, email: s.email, name: s.name, data: s.data, human_fields: s.human_fields } })
+      }).catch(e => ({ ok: false, status: 0, json: async () => ({ error: e.message }) }))
+      if (res.status === 404) return say(false, site, `${who}: never delivered`, 'form-redeliver is not deployed on the site')
+      const out = await res.json().catch(() => ({}))
+      if (res.ok && out.result === 'already delivered') say(false, site, `${who}: claimed but no delivery line`, 'a delivery stopped part way; check submission-created by hand')
+      else if (res.ok) say(false, site, `${who}: rescued, delivered late by the sweep`, `${out.result}; Netlify never ran submission-created for it`)
+      else say(false, site, `${who}: sweep could not deliver it`, `form-redeliver answered ${res.status}${out.result || out.error ? `: ${out.result || out.error}` : ''}`)
+    }
+  }
+  if (!missing) say(true, site, 'every real submission of the last 48 hours has a delivery line')
+}
+
 for (const site of sites) {
+  if (SWEEP) { try { await sweepSite(site) } catch (e) { say(false, site, 'form sweep ran', e.message) } continue }
   try { await checkSite(site) } catch (e) { say(false, site, 'form checks ran', e.message) }
 }
 writeFileSync('failures.txt', failures.join('\n') + (failures.length ? '\n' : ''))
