@@ -300,13 +300,23 @@ async function sweepSite(site) {
   await watchSpam(site, since)
 }
 
-// Obvious junk: mostly non-Latin letters (the Russian SEO spam of Oct 2026),
-// or three or more links. Everything else in the spam folder may be a person.
+// Obvious junk, none of which a person typing into a form produces:
+// - mostly non-Latin letters (the Russian SEO spam of Oct 2026)
+// - three or more links, or an HTML link tag (the "xnxx" porn spam of Nov 2026)
+// - sent by a script: every real browser's user agent starts "Mozilla/", and
+//   form-tester bots name themselves (CallbackSender/1.0, AnalyticOwl-FormTester)
+// Everything else in the spam folder may be a person.
 function obviousJunk(s) {
   const text = Object.entries(s.data || {}).filter(([k]) => !['ip', 'user_agent', 'referrer'].includes(k)).map(([, v]) => String(v)).join(' ')
   const letters = text.match(/\p{L}/gu) || []
   const latin = letters.filter(c => /\p{Script=Latin}/u.test(c)).length
-  return (letters.length > 20 && latin / letters.length < 0.5) || (text.match(/https?:\/\//g) || []).length >= 3
+  const ua = String(s.data?.user_agent || '')
+  return (letters.length > 20 && latin / letters.length < 0.5) ||
+    (text.match(/https?:\/\//g) || []).length >= 3 ||
+    /<a\s[^>]*href/i.test(text) ||
+    /\bxnxx\b/i.test(text) ||
+    (ua && !/^Mozilla\//.test(ua)) ||
+    /bot\b|crawler|spider|tester|headless/i.test(ua)
 }
 
 // Netlify's spam folder never reaches our email function. Each submission in
