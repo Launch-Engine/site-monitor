@@ -300,13 +300,38 @@ async function sweepSite(site) {
   await watchSpam(site, since)
 }
 
-// Obvious junk: mostly non-Latin letters (the Russian SEO spam of Oct 2026),
-// or three or more links. Everything else in the spam folder may be a person.
-function obviousJunk(s) {
-  const text = Object.entries(s.data || {}).filter(([k]) => !['ip', 'user_agent', 'referrer'].includes(k)).map(([, v]) => String(v)).join(' ')
+// Obvious junk, none of which a person typing into a form produces:
+// - mostly non-Latin letters (the Russian SEO spam of Oct 2026)
+// - three or more links, or an HTML link tag (the "xnxx" porn spam of Nov 2026)
+// - sent by a script: every real browser's user agent starts "Mozilla/", and
+//   form-tester bots name themselves (CallbackSender/1.0, AnalyticOwl-FormTester)
+// - nothing to reply to: no email and no phone
+// - the "I wanted to know your price" bot, in any language (a one-liner)
+// - a sales pitch (SEO, virtual assistant, lead gen, AI chat) on any form
+//   but vendor-inquiry, where pitching services is the point
+// - an email on a Russian domain
+// Everything else in the spam folder may be a person.
+// Bare English "price" stays out: a real owner may ask what management costs.
+const PRICE_WORDS = /know your price|precio|prix|preis|prezzo|preço|giá|цен|fiyat|harga|cena/i
+const PITCH = /virtual assistant|\bSEO\b|search engine optimi[sz]ation|lead generation|web(site)? (re)?design|first page of google|digital marketing|AI (chat|chatbot|receptionist|assistant|agent)|books? appointments for you|qualif(y|ies) leads/i
+function obviousJunk(s, formName = s.form_name) {
+  const d = s.data || {}
+  const text = Object.entries(d).filter(([k]) => !['ip', 'user_agent', 'referrer'].includes(k)).map(([, v]) => String(v)).join(' ')
+  const message = String(d.message || d.comments || d.details || '').trim()
+  const email = String(d.email || s.email || '')
   const letters = text.match(/\p{L}/gu) || []
   const latin = letters.filter(c => /\p{Script=Latin}/u.test(c)).length
-  return (letters.length > 20 && latin / letters.length < 0.5) || (text.match(/https?:\/\//g) || []).length >= 3
+  const ua = String(d.user_agent || '')
+  return (letters.length > 20 && latin / letters.length < 0.5) ||
+    (text.match(/https?:\/\//g) || []).length >= 3 ||
+    /<a\s[^>]*href/i.test(text) ||
+    /\bxnxx\b/i.test(text) ||
+    (ua && !/^Mozilla\//.test(ua)) ||
+    /bot\b|crawler|spider|tester|headless/i.test(ua) ||
+    (!email.trim() && !String(d.phone || '').trim()) ||
+    (message.length < 80 && PRICE_WORDS.test(message) && !/\d/.test(message)) ||
+    (formName !== 'vendor-inquiry' && PITCH.test(message)) ||
+    /\.ru$/i.test(email)
 }
 
 // Netlify's spam folder never reaches our email function. Each submission in
