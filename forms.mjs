@@ -17,8 +17,8 @@
 //                                   2026, two vendor questions) is handed to the
 //                                   site's form-redeliver, which delivers it exactly
 //                                   once. Each rescue is a failure line, so Slack hears.
-//                                   It also alerts once on anything in Netlify's spam
-//                                   folder that isn't ours or obvious junk.
+//                                   Netlify's spam folder is left alone: what Netlify
+//                                   calls spam is trusted as spam (Rob, 2026-11-04).
 //   node forms.mjs --sweep --dry    lists what the sweep would deliver; sends nothing.
 //
 // Environment: NETLIFY_AUTH_TOKEN, FORM_CHECK_SECRET (required); FORMS_URL (optional, a preview).
@@ -297,61 +297,6 @@ async function sweepSite(site) {
     }
   }
   if (!missing) say(true, site, 'every real submission of the last 48 hours has a delivery line')
-  await watchSpam(site, since)
-}
-
-// Obvious junk, none of which a person typing into a form produces:
-// - mostly non-Latin letters (the Russian SEO spam of Oct 2026)
-// - three or more links, or an HTML link tag (the "xnxx" porn spam of Nov 2026)
-// - sent by a script: every real browser's user agent starts "Mozilla/", and
-//   form-tester bots name themselves (CallbackSender/1.0, AnalyticOwl-FormTester)
-// - nothing to reply to: no email and no phone
-// - the "I wanted to know your price" bot, in any language (a one-liner)
-// - a sales pitch (SEO, virtual assistant, lead gen, AI chat) on any form
-//   but vendor-inquiry, where pitching services is the point
-// - an email on a Russian domain
-// Everything else in the spam folder may be a person.
-// Bare English "price" stays out: a real owner may ask what management costs.
-const PRICE_WORDS = /know your price|precio|prix|preis|prezzo|preço|giá|цен|fiyat|harga|cena/i
-const PITCH = /virtual assistant|\bSEO\b|search engine optimi[sz]ation|lead generation|web(site)? (re)?design|first page of google|digital marketing|AI (chat|chatbot|receptionist|assistant|agent)|books? appointments for you|qualif(y|ies) leads/i
-function obviousJunk(s, formName = s.form_name) {
-  const d = s.data || {}
-  const text = Object.entries(d).filter(([k]) => !['ip', 'user_agent', 'referrer'].includes(k)).map(([, v]) => String(v)).join(' ')
-  const message = String(d.message || d.comments || d.details || '').trim()
-  const email = String(d.email || s.email || '')
-  const letters = text.match(/\p{L}/gu) || []
-  const latin = letters.filter(c => /\p{Script=Latin}/u.test(c)).length
-  const ua = String(d.user_agent || '')
-  return (letters.length > 20 && latin / letters.length < 0.5) ||
-    (text.match(/https?:\/\//g) || []).length >= 3 ||
-    /<a\s[^>]*href/i.test(text) ||
-    /\bxnxx\b/i.test(text) ||
-    (ua && !/^Mozilla\//.test(ua)) ||
-    /bot\b|crawler|spider|tester|headless/i.test(ua) ||
-    (!email.trim() && !String(d.phone || '').trim()) ||
-    (message.length < 80 && PRICE_WORDS.test(message) && !/\d/.test(message)) ||
-    (formName !== 'vendor-inquiry' && PITCH.test(message)) ||
-    /\.ru$/i.test(email)
-}
-
-// Netlify's spam folder never reaches our email function. Each submission in
-// it that isn't ours and isn't obvious junk is alerted once (the site
-// remembers which: form-status spam_seen), so a real person isn't missed.
-async function watchSpam(site, since) {
-  const maybe = []
-  for (const form of await netlify(`/sites/${site.netlify}/forms`)) {
-    for (const s of await netlify(`/forms/${form.id}/submissions?state=spam&per_page=100`)) {
-      const email = s.email || s.data?.email || ''
-      if (s.created_at < since || isCheck(email) || /@launchengine\.com$/i.test(email) || obviousJunk(s)) continue
-      maybe.push({ s, form })
-    }
-  }
-  if (!maybe.length) return say(true, site, "nothing that looks like a person in Netlify's spam folder")
-  const fresh = new Set(DRY ? maybe.map(m => m.s.id) : (await status(site, '', { method: 'POST', body: JSON.stringify({ spam_seen: maybe.map(m => m.s.id) }) })).new || [])
-  for (const { s, form } of maybe.filter(m => fresh.has(m.s.id))) {
-    const when = new Date(s.created_at).toLocaleString('en-US', { timeZone: 'America/Denver', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
-    say(DRY ? 'warn' : false, site, `${form.name} at ${when} (${mask(s.email || s.data?.email)}): in Netlify's spam folder`, 'check it is not a real person; if it is, mark it "not spam" in Netlify and forward it')
-  }
 }
 
 for (const site of sites) {
