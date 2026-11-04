@@ -30,4 +30,4 @@ By hand: `/forms-check` in Claude Code, or
 
 ## Spam folder
 
-A submission Netlify marks as spam never runs the site's email function. The sweep looks at each site's spam folder (last 48 hours) and alerts once on anything that isn't our own test and isn't obvious junk (mostly non-Latin text, or three or more links): check it isn't a real person, and if it is, mark it "not spam" in Netlify and forward it. The site remembers which it alerted on (form-status `spam_seen`). Our own form test flagged as spam is a warning, not an alert.
+Netlify's spam filter (Akismet) is trusted: a submission it marks as spam is never delivered, swept or alerted on. Rob decided this on 2026-11-04 after every spam-folder alert since Oct 28 turned out to be junk (the last one: a "are you hiring" template on Falcon's general-inquiry form). Only submissions Netlify accepts are watched (the sweep above). To check the folder by hand: Netlify, the site, Forms, the form, Spam. Our own daily form test flagged as spam is still a warning, not an alert.
