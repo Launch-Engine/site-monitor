@@ -98,6 +98,10 @@ jobs:
 
           test('site pages load and fit a phone screen', async ({ browser }) => {
             const list = await pages()
+            // One test opens every page at both widths, so its time limit grows
+            // with the page count: a minute to start, plus 5s per page per width.
+            // A flat 60s ran out at 53 pages (launchengine.com, 2026-11-09).
+            test.setTimeout(60_000 + list.length * Object.keys(WIDTHS).length * 5_000)
             const problems = []
             const warnings = []
             for (const [name, width] of Object.entries(WIDTHS)) {
