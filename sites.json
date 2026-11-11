@@ -26,7 +26,11 @@
       ],
       "netlify": "2c270111-aea9-4c6a-af89-652c5480606d",
       "repo": "Launch-Engine/site-launchengine",
-      "branch": "main"
+      "branch": "main",
+      "searchConsole": {
+        "property": "sc-domain:launchengine.com",
+        "submit": true
+      }
     },
     {
       "name": "LaunchEngine Workspace (app)",
@@ -96,7 +100,11 @@
         "/"
       ],
       "repo": "Launch-Engine/site-docrunner",
-      "branch": "main"
+      "branch": "main",
+      "searchConsole": {
+        "property": "sc-domain:docrunner.io",
+        "submit": false
+      }
     },
     {
       "name": "DocRunner Developer Docs",
