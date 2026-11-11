@@ -1,0 +1,71 @@
+# Indexing (indexing.mjs): is Google indexing the pages in each site's sitemap?
+# Only sites in sites.json with a "searchConsole" block take part.
+#
+#   every 6 hours   fetch each sitemap; resubmit it to Search Console when it changed
+#   once a day      plus inspect every sitemap URL (the script decides: the first run
+#                   20+ hours after the last inspection does it)
+#
+# State (sitemap hashes, first-seen dates, last alerts) lives in indexing-state.json
+# on the 'indexing-state' branch, so main's history stays clean and the push
+# triggers nothing. Without the GSC_SERVICE_ACCOUNT_JSON secret the job warns and
+# passes. Reports post to Slack (#site-monitor).
+name: Indexing
+
+on:
+  schedule:
+    - cron: '41 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      inspect:
+        description: 'Inspect every page now, even if a daily inspection already ran'
+        type: boolean
+        default: false
+
+concurrency:
+  group: indexing
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  indexing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Load state
+        run: |
+          if git fetch -q origin indexing-state; then
+            git show FETCH_HEAD:indexing-state.json > indexing-state.json
+          else
+            echo "No indexing-state branch yet; starting fresh."
+          fi
+
+      - name: Check indexing
+        env:
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
+          SLACK_ALERT_WEBHOOK_URL: ${{ secrets.SLACK_ALERT_WEBHOOK_URL }}
+          INSPECT: ${{ github.event.inputs.inspect }}
+        run: |
+          flag=""
+          [ "$INSPECT" = "true" ] && flag="--inspect"
+          node indexing.mjs $flag
+
+      - name: Save state
+        if: always()
+        run: |
+          [ -f indexing-state.json ] || { echo "No state to save."; exit 0; }
+          cp indexing-state.json "$RUNNER_TEMP/state.json"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -q --orphan indexing-state
+          cp "$RUNNER_TEMP/state.json" indexing-state.json
+          git add -f indexing-state.json
+          git commit -q -m "Indexing state $(date -u +%FT%TZ)"
+          git push -q -f origin indexing-state
