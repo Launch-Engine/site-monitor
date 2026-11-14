@@ -1,0 +1,579 @@
+{
+  "sites": {
+    "LaunchEngine": {
+      "urls": {
+        "https://launchengine.com": {
+          "firstSeen": "2026-11-07",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-11-13T20:24:20Z"
+        },
+        "https://launchengine.com/mission-control": {
+          "firstSeen": "2026-11-10",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-11-11T19:04:13Z"
+        },
+        "https://launchengine.com/monday-workspace": {
+          "firstSeen": "2026-10-20",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-24T22:47:53Z"
+        },
+        "https://launchengine.com/websites": {
+          "firstSeen": "2026-09-17",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-30T05:10:24Z"
+        },
+        "https://launchengine.com/professional-services": {
+          "firstSeen": "2026-06-06",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-07T05:15:08Z"
+        },
+        "https://launchengine.com/agents": {
+          "firstSeen": "2026-06-25",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-26T19:06:01Z"
+        },
+        "https://launchengine.com/docrunner": {
+          "firstSeen": "2026-06-24",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-11-11T19:08:12Z"
+        },
+        "https://launchengine.com/aircall-services": {
+          "firstSeen": "2026-09-22",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-23T05:45:28Z"
+        },
+        "https://launchengine.com/marketplace": {
+          "firstSeen": "2026-10-19",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-30T05:56:16Z"
+        },
+        "https://launchengine.com/quote-builder": {
+          "firstSeen": "2026-03-04",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-08-21T02:26:12Z"
+        },
+        "https://launchengine.com/free-crm": {
+          "firstSeen": "2026-10-19",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-24T15:13:10Z"
+        },
+        "https://launchengine.com/tech-stack-calculator": {
+          "firstSeen": "2026-03-04",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-23T16:21:47Z"
+        },
+        "https://launchengine.com/ai-readiness": {
+          "firstSeen": "2026-08-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-06T07:53:56Z"
+        },
+        "https://launchengine.com/tools": {
+          "firstSeen": "2026-09-11",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-24T20:14:45Z"
+        },
+        "https://launchengine.com/subscribe": {
+          "firstSeen": "2026-07-14",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-04T10:40:25Z"
+        },
+        "https://launchengine.com/buildium-integration": {
+          "firstSeen": "2026-09-17",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-11-11T07:22:37Z"
+        },
+        "https://launchengine.com/rentengine-integration": {
+          "firstSeen": "2026-08-13",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-08-29T14:30:31Z"
+        },
+        "https://launchengine.com/team": {
+          "firstSeen": "2026-11-10",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-08T07:16:50Z"
+        },
+        "https://launchengine.com/clay": {
+          "firstSeen": "2026-11-10",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-11-11T19:06:01Z"
+        },
+        "https://launchengine.com/about": {
+          "firstSeen": "2026-05-06",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-28T19:03:45Z"
+        },
+        "https://launchengine.com/contact": {
+          "firstSeen": "2026-03-04",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-13T05:22:35Z"
+        },
+        "https://launchengine.com/blog": {
+          "firstSeen": "2026-05-06",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-17T10:55:11Z"
+        },
+        "https://launchengine.com/guides": {
+          "firstSeen": "2026-09-01",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-25T23:44:37Z"
+        },
+        "https://launchengine.com/guides/appfolio-api": {
+          "firstSeen": "2026-09-17",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-15T07:54:10Z"
+        },
+        "https://launchengine.com/a2p-checker": {
+          "firstSeen": "2026-09-11",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-15T13:19:36Z"
+        },
+        "https://launchengine.com/buildium-websites": {
+          "firstSeen": "2026-09-15",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-15T14:39:33Z"
+        },
+        "https://launchengine.com/guides/a2p-10dlc-property-management": {
+          "firstSeen": "2026-09-14",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-01T19:24:08Z"
+        },
+        "https://launchengine.com/guides/aircall-monday-integration-not-working": {
+          "firstSeen": "2026-09-01",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-14T01:25:15Z"
+        },
+        "https://launchengine.com/guides/aircall-monday-integration-setup": {
+          "firstSeen": "2026-09-01",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-14T01:40:30Z"
+        },
+        "https://launchengine.com/guides/best-phone-system-for-monday-crm": {
+          "firstSeen": "2026-08-18",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-30T04:22:53Z"
+        },
+        "https://launchengine.com/guides/ai-agents-for-property-management": {
+          "firstSeen": "2026-11-06",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-17T23:54:19Z"
+        },
+        "https://launchengine.com/guides/ai-agents-on-monday": {
+          "firstSeen": "2026-08-18",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-12T06:01:51Z"
+        },
+        "https://launchengine.com/guides/ai-implementation-property-management": {
+          "firstSeen": "2026-11-06",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-11-13T13:24:09Z"
+        },
+        "https://launchengine.com/guides/ai-property-maintenance-operations": {
+          "firstSeen": "2026-11-06",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "NEUTRAL",
+          "coverage": "Crawled - currently not indexed",
+          "lastCrawl": "2026-07-19T13:26:41Z"
+        },
+        "https://launchengine.com/guides/buildium-api": {
+          "firstSeen": "2026-09-17",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-11-11T11:38:02Z"
+        },
+        "https://launchengine.com/guides/document-automation-on-monday": {
+          "firstSeen": "2026-08-18",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "NEUTRAL",
+          "coverage": "Crawled - currently not indexed",
+          "lastCrawl": "2026-08-29T07:01:24Z"
+        },
+        "https://launchengine.com/guides/leasing-tools-api": {
+          "firstSeen": "2026-08-18",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-05T16:35:20Z"
+        },
+        "https://launchengine.com/guides/tenant-turner-vs-showmojo-vs-rentengine": {
+          "firstSeen": "2026-09-17",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-26T23:38:32Z"
+        },
+        "https://launchengine.com/guides/pandadoc-api-pricing-alternative": {
+          "firstSeen": "2026-08-18",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-16T09:41:24Z"
+        },
+        "https://launchengine.com/guides/pm-api-report-card": {
+          "firstSeen": "2026-11-10",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-08-30T06:08:07Z"
+        },
+        "https://launchengine.com/guides/property-management-automation": {
+          "firstSeen": "2026-11-06",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-30T08:13:33Z"
+        },
+        "https://launchengine.com/guides/property-management-phone-scripts": {
+          "firstSeen": "2026-08-31",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-05T07:25:51Z"
+        },
+        "https://launchengine.com/guides/property-management-phone-systems": {
+          "firstSeen": "2026-09-21",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-11-01T19:45:57Z"
+        },
+        "https://launchengine.com/guides/rentvine-api": {
+          "firstSeen": "2026-11-10",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-01T17:16:17Z"
+        },
+        "https://launchengine.com/privacy": {
+          "firstSeen": "2026-07-21",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-26T08:11:04Z"
+        },
+        "https://launchengine.com/terms": {
+          "firstSeen": "2026-08-19",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-14T15:03:12Z"
+        },
+        "https://launchengine.com/post/rethinking-the-sop-why-documentation-belongs-inside-the-work": {
+          "firstSeen": "2026-05-06",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-08-11T11:09:41Z"
+        },
+        "https://launchengine.com/post/integrating-monday-com-with-property-management-software": {
+          "firstSeen": "2026-05-06",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-29T05:55:56Z"
+        }
+      },
+      "sitemapHash": "0940e13d05ab45f309a4b28f1e88888eb66665ada1a952f5a78a4cc6cfb7e9a0",
+      "lastSubmitted": "2026-11-12T07:43:14.048Z",
+      "alerted": {
+        "stuck https://launchengine.com/guides/document-automation-on-monday": "2026-11-12T07:43:14.048Z",
+        "stuck https://launchengine.com/guides/ai-property-maintenance-operations": "2026-11-13T07:17:45.162Z"
+      }
+    },
+    "DocRunner": {
+      "urls": {
+        "https://docrunner.io/": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-24T08:54:08Z"
+        },
+        "https://docrunner.io/features/": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-23T02:40:27Z"
+        },
+        "https://docrunner.io/partners/": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "NEUTRAL",
+          "coverage": "Alternate page with proper canonical tag",
+          "lastCrawl": "2026-10-03T02:58:45Z"
+        },
+        "https://docrunner.io/pricing": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-30T08:15:30Z"
+        },
+        "https://docrunner.io/property-management": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-06T20:19:32Z"
+        },
+        "https://docrunner.io/for/": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-24T14:05:28Z"
+        },
+        "https://docrunner.io/compare/": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-01T10:12:48Z"
+        },
+        "https://docrunner.io/compare/getsign": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-12T15:48:09Z"
+        },
+        "https://docrunner.io/compare/docusign": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-08-19T20:01:14Z"
+        },
+        "https://docrunner.io/compare/pandadoc": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-06T22:04:07Z"
+        },
+        "https://docrunner.io/compare/docugen": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-26T18:08:00Z"
+        },
+        "https://docrunner.io/templates/": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-23T16:05:18Z"
+        },
+        "https://docrunner.io/for/staffing": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-24T00:18:18Z"
+        },
+        "https://docrunner.io/for/sales-ops": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-12T22:29:12Z"
+        },
+        "https://docrunner.io/for/legal-ops": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-28T00:43:50Z"
+        },
+        "https://docrunner.io/for/agencies": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-05T14:43:27Z"
+        },
+        "https://docrunner.io/for/med-spas": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-19T08:31:10Z"
+        },
+        "https://docrunner.io/for/venues": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "NEUTRAL",
+          "coverage": "URL is unknown to Google"
+        },
+        "https://docrunner.io/security": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-28T06:45:18Z"
+        },
+        "https://docrunner.io/pandadoc-alternative": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-11-01T04:39:23Z"
+        },
+        "https://docrunner.io/blog/": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-28T11:47:52Z"
+        },
+        "https://docrunner.io/guides/": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-23T02:03:45Z"
+        },
+        "https://docrunner.io/guides/monday-com-document-signing": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-23T05:32:19Z"
+        },
+        "https://docrunner.io/guides/send-document-for-signature-monday-board": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-23T05:27:35Z"
+        },
+        "https://docrunner.io/blog/hidden-cost-of-zapier-document-workflows": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-08-18T17:11:15Z"
+        },
+        "https://docrunner.io/blog/why-monday-teams-outgrow-docusign-by-year-two": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-23T02:30:54Z"
+        },
+        "https://docrunner.io/blog/native-vs-zapier-document-signing-monday": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-09-29T18:25:03Z"
+        },
+        "https://docrunner.io/blog/lease-signing-automation-property-managers": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-12T16:19:04Z"
+        },
+        "https://docrunner.io/blog/esign-act-what-makes-electronic-signature-legal": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-03T19:45:45Z"
+        },
+        "https://docrunner.io/contact": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-23T21:02:20Z"
+        },
+        "https://docrunner.io/privacy": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-30T14:25:45Z"
+        },
+        "https://docrunner.io/terms": {
+          "firstSeen": "2026-11-12",
+          "inspected": "2026-11-14T07:00:38.276Z",
+          "verdict": "PASS",
+          "coverage": "Submitted and indexed",
+          "lastCrawl": "2026-10-26T16:36:32Z"
+        }
+      },
+      "sitemapHash": "44c9ac4d3f4edcc1ebbb620e43bc8267f5417251c832a37c60625dbe7994826e"
+    }
+  },
+  "lastInspection": "2026-11-14T07:00:38.276Z"
+}
